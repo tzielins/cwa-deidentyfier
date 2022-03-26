@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ed.biordm.actigraphy</groupId>
 	<artifactId>deidentyfier</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>deidentyfier</name>
 	<description>Removing device id from data</description>
 	<properties>
