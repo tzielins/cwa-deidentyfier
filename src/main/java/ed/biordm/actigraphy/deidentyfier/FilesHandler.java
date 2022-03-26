@@ -33,12 +33,14 @@ public class FilesHandler {
     
     protected void handle(CommandOptions options) throws IOException {
         
+        
         if (!Files.exists(options.destination)) {
             Files.createDirectories(options.destination);
         }
         
+        logger.info("\nTarget directory: {}",options.destination.toAbsolutePath());
+        
         if (Files.isRegularFile(options.source)) {
-            System.out.println("Handling one");;
             try {
                 deidentifyFile(options.source, options.destination, options.suffix, 1);
             } catch (Exception e) {
@@ -63,7 +65,7 @@ public class FilesHandler {
                      });
                 
                 if (count.get() == 0) {
-                    logger.warn("No file was processed. Supported extensions are: .cwa");
+                    logger.warn("No file was processed. The only supported extensions are: .cwa");
                 }    
             }
         }

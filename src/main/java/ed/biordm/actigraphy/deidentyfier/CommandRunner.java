@@ -4,13 +4,13 @@
  */
 package ed.biordm.actigraphy.deidentyfier;
 
-import java.awt.SystemColor;
 import java.io.Console;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class CommandRunner implements ApplicationRunner {
     
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     final FilesHandler handler;
     
     @Autowired
@@ -35,8 +37,13 @@ public class CommandRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws IOException {
 
-        CommandOptions command = getCommandOptions(args);             
-        handler.handle(command);
+        try {
+            CommandOptions command = getCommandOptions(args);             
+            handler.handle(command);
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            System.exit(1);
+        }
 
     }
 
@@ -48,7 +55,7 @@ public class CommandRunner implements ApplicationRunner {
             options.source = promptSource();
         }
         
-        if (!Files.exists(options.source)) throw new IllegalArgumentException("File: "+options.source+" does not exists");
+        if (!Files.exists(options.source)) throw new IllegalArgumentException("Input source: '"+options.source+"' does not exists");
         options.source = options.source.toAbsolutePath();
         
         if (options.destination == null) {
@@ -69,8 +76,6 @@ public class CommandRunner implements ApplicationRunner {
     
     protected void setPassedOptions(CommandOptions options, ApplicationArguments args) {
 
-        System.out.println(args.getOptionNames());
-        System.out.println(args.getNonOptionArgs());
         
         if (!args.getNonOptionArgs().isEmpty()) {
             String source = args.getNonOptionArgs().get(0);
@@ -87,11 +92,9 @@ public class CommandRunner implements ApplicationRunner {
         }
         
         if (args.getOptionNames().contains("dest") && !args.getOptionValues("dest").isEmpty()) {
-            System.out.println("DEST");
             options.destination = Paths.get(args.getOptionValues("dest").get(0));
         }
         if (args.getOptionNames().contains("d") && !args.getOptionValues("d").isEmpty()) {
-            System.out.println("D");
             options.destination = Paths.get(args.getOptionValues("d").get(0));
         }
         
@@ -105,7 +108,7 @@ public class CommandRunner implements ApplicationRunner {
         
         Console console = System.console();
         
-        console.printf("Please enter the path to one file to be de-identified or%n");
+        console.printf("\n\nPlease enter the path to one file to be de-identified or%n");
         console.printf("to directory with files to be de-identified%n");
         String source = console.readLine("Source path [<ENTER> for current directory]: "); 
         
