@@ -98,8 +98,8 @@ public class CommandRunner implements ApplicationRunner {
             options.destination = Paths.get(args.getOptionValues("d").get(0));
         }
         
-        if (args.getOptionNames().contains("suf") && !args.getOptionValues("suf").isEmpty()) {
-            options.suffix = args.getOptionValues("suf").get(0);
+        if (args.getOptionNames().contains("sufix") && !args.getOptionValues("sufix").isEmpty()) {
+            options.suffix = args.getOptionValues("sufix").get(0);
         }
         
     }
